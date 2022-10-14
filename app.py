@@ -122,7 +122,7 @@ class Data(Resource):
         if wallet_address not in DATA:
             return 'NOT FOUND', 404
         else:
-            return DATA[wallet_address]
+            return jsonify(DATA[wallet_address])
 
 
 api.add_resource(DataList, '/data')
