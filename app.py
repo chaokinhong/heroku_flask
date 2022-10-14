@@ -113,7 +113,7 @@ class DataList(Resource):
         ins_data = res_j['edge_follow']['count']
         total_data = (int(youtube_data)+int(ins_data) +
                       int(twitter_data)+int(tiktok_data))/4
-        DATA[wallet_address] = {'data': total_data}
+        DATA[wallet_address] = {'data': int(total_data)}
         return 'SUCCESS', 200
 
 
