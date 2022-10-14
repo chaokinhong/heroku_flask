@@ -7,10 +7,10 @@ from flask_cors import CORS
 app = Flask(__name__)
 api = Api(app)
 
-CORS(app,supports_credentials=True)
+CORS(app, supports_credentials=True)
 
 DATA = {
-    '': 0
+    '': {'data': 0}
 }
 # @app.route('/data', methods=['POST'])
 # def get_channel_stats():
@@ -62,10 +62,11 @@ DATA = {
 #                   int(twitter_data)+int(tiktok_data))/4
 #     return jsonify({'data': int(total_data)})
 
+
 class DataList(Resource):
     def post(self):
         wallet_address = request.json['wallet_address']
-         # youtube
+        # youtube
         channel_id = request.json['youtube_id']
         youtube_api_key = 'AIzaSyDk5EXbBMLdZJ5Crd916eN-BYF27YQ3mMU'
         youtube = build('youtube', 'v3', developerKey=youtube_api_key)
@@ -88,7 +89,8 @@ class DataList(Resource):
         twitter_data = res_j['data']['user']['result']['legacy']['followers_count']
         # tiktok
         username = request.json['tiktok_username']
-        url = "https://tiktok_solutions.p.rapidapi.com/user/{}".format(username)
+        url = "https://tiktok_solutions.p.rapidapi.com/user/{}".format(
+            username)
         headers = {
             "X-RapidAPI-Key": "958d53532bmshefb361db40eea45p164fd2jsn0c8ded881732",
             "X-RapidAPI-Host": "tiktok_solutions.p.rapidapi.com"
@@ -110,19 +112,18 @@ class DataList(Resource):
         res_j = response.json()
         ins_data = res_j['edge_follow']['count']
         total_data = (int(youtube_data)+int(ins_data) +
-                    int(twitter_data)+int(tiktok_data))/4
-        DATA[wallet_address] = total_data
-        return 'SUCCESS',200
-  
-        
+                      int(twitter_data)+int(tiktok_data))/4
+        DATA[wallet_address] = {'data': total_data}
+        return 'SUCCESS', 200
 
 
 class Data(Resource):
-    def get(self,wallet_address):
+    def get(self, wallet_address):
         if wallet_address not in DATA:
             return 'NOT FOUND', 404
         else:
             return DATA[wallet_address]
+
 
 api.add_resource(DataList, '/data')
 api.add_resource(Data, '/data/<wallet_address>')
